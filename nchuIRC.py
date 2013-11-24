@@ -16,9 +16,9 @@ def connect(HOST, PORT, CHANNEL, NICKNAME, IDENTITY, REALNAME):
     while connected is False:
         try:
             irc.connect((HOST, PORT))
-            irc.send("NICK {0}\r\n".format(NICKNAME))
-            irc.send("USER {0} {1} bla: {2}\r\n".format(IDENTITY, HOST, REALNAME))
-            irc.send("JOIN {0}\r\n".format(CHANNEL))
+            irc.send("NICK {0}\r\n".format(NICKNAME).encode("utf-8"))
+            irc.send("USER {0} {1} bla: {2}\r\n".format(IDENTITY, HOST, REALNAME).encode('utf-8'))
+            irc.send("JOIN {0}\r\n".format(CHANNEL).encode("utf-8"))
             connected = True
         except socket.error:
             print("Retrying to connect...")
@@ -67,7 +67,7 @@ connect(HOST, PORT, CHANNEL, NICKNAME, IDENTITY, REALNAME)
 
 # Read from the channel
 while connected:
-    raw_msg = irc.recv(1024)
+    raw_msg = irc.recv(1024).decode("utf-8")
     if raw_msg[0:4] == "PING":
         # raw_msg looks like "PING :HELLO_WORLD"
         irc.send("PONG {0}\r\n".format(raw_msg.split()[1]))
