@@ -43,23 +43,21 @@ def logDown(msg):
 
 
 def logToJson():
-    ele = ['time', 'name', 'content']
     global dateList
     filename = "{0}-{1}-{2}".format(dateList[1], dateList[2], dateList[4])
 
     logFile = open("{0}.log".format(filename), "r")
     jsonFile = open("{0}.json".format(filename), "a")
 
+    ele = ['time', 'name', 'content']
     line = logFile.readlines()[-1].split(" ", 2)
-    result = {}
-    for i in range(3):
-        result[ele[i]] = line[i].strip()
+    result = {ele[i]: line[i].strip() for i in range(3)}
 
     jsonData = json.dumps(result, indent=4, separators=(',', ':'), ensure_ascii=False)
     jsonFile.write("{0}, \n".format(jsonData))
 
-    jsonFile.close()
     logFile.close()
+    jsonFile.close()
 
 
 # Login to the server
