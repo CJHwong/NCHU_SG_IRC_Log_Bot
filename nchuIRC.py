@@ -28,7 +28,8 @@ def connect(HOST, PORT, CHANNEL, NICKNAME, IDENTITY, REALNAME):
 
 def logDown(msg):
     # Write to day-mon-year.log
-    os.chdir(os.path.dirname(__file__))
+    global fwd
+    os.chdir(fwd)
 
     try:
         os.mkdir("{0}".format(CHANNEL[1:]))
@@ -53,8 +54,8 @@ def logToJson():
     line = logFile.readlines()[-1].split(" ", 2)
     result = {ele[i]: line[i].strip() for i in range(3)}
 
-    jsonData = json.dumps(result, indent=4, separators=(',', ':'), ensure_ascii=False)
-    jsonFile.write("{0}, \n".format(jsonData))
+    jsonData = json.dumps(result, ensure_ascii=False)
+    jsonFile.write("{0}, ".format(jsonData))
 
     logFile.close()
     jsonFile.close()
@@ -64,6 +65,7 @@ def logToJson():
 irc = socket.socket()
 connected = False
 connect(HOST, PORT, CHANNEL, NICKNAME, IDENTITY, REALNAME)
+fwd = os.getcwd()
 
 # Read from the channel
 while connected:
