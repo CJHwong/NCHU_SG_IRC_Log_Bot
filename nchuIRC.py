@@ -72,7 +72,7 @@ while connected:
     raw_msg = irc.recv(4096).decode("utf-8")
     if raw_msg[0:4] == "PING":
         # raw_msg looks like "PING :HELLO_WORLD"
-        irc.send("PONG {0}\r\n".format(raw_msg.split()[1]))
+        irc.send("PONG {0}\r\n".format(raw_msg.split()[1]).encode("utf-8"))
 
     if len(raw_msg.split()) > 2 and raw_msg.split()[1] == "PRIVMSG":
         # raw_msg looks like "NICKNAME!~IDENTITY@HOST PRIVMSG #CHA.NNEL :CONTENTS"
