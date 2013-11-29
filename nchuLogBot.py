@@ -8,7 +8,6 @@ class LogBot():
     def __init__(self):
         self.irc = socket.socket()
         self.connected = False
-        self.dateList = time.ctime().split()
 
     def connect(self, HOST, PORT, CHANNEL, NICKNAME, IDENTITY, REALNAME):
         while self.connected is False:
@@ -25,6 +24,7 @@ class LogBot():
                 continue
 
     def listen(self):
+        self.dateList = time.ctime().split()
         raw_msg = self.irc.recv(4096).decode("utf-8")
         if raw_msg[0:4] == "PING":
             # raw_msg looks like "PING :HELLO_WORLD"
@@ -61,15 +61,14 @@ class LogBot():
         filename = "{0}-{1}-{2}".format(dateList[1], dateList[2], dateList[4])
 
         logFile = open("{0}.log".format(filename), "r")
-        jsonFile = open("{0}.json".format(filename), "a")
-
         ele = ['time', 'name', 'content']
         line = logFile.readlines()[-1].split(" ", 2)
         result = {ele[i]: line[i].strip() for i in range(3)}
+        logFile.close()
+
+        jsonFile = open("{0}.json".format(filename), "a")
         jsonData = json.dumps(result, ensure_ascii=False)
         jsonFile.write("{0}, ".format(jsonData))
-
-        logFile.close()
         jsonFile.close()
 
 
@@ -92,6 +91,6 @@ if __name__ == "__main__":
             if msg != "":
                 bot.logDown(msg)
                 bot.logToJson()
-                print(msg)
+                print(msg, end='')
 
             time.sleep(0.01)
