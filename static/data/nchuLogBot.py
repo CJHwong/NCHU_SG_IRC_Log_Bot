@@ -8,6 +8,7 @@ class LogBot():
     def __init__(self):
         self.irc = socket.socket()
         self.connected = False
+        self.fwd = os.getcwd()
 
     def connect(self, HOST, PORT, CHANNEL, NICKNAME, IDENTITY, REALNAME):
         while self.connected is False:
@@ -42,8 +43,7 @@ class LogBot():
 
     def logDown(self, msg):
         # Write to day-mon-year.log
-        global fwd
-        os.chdir(fwd)
+        os.chdir(self.fwd)
 
         try:
             os.mkdir("{0}".format(CHANNEL[1:]))
@@ -52,23 +52,21 @@ class LogBot():
             os.chdir("{0}".format(CHANNEL[1:]))
 
         dateList = self.dateList
-        logFile = open("{0}-{1}-{2}.log".format(dateList[1], dateList[2], dateList[4]), "a")
-        logFile.write(msg)
-        logFile.close()
+        with open("{0}-{1}-{2}.log".format(dateList[1], dateList[2], dateList[4]), "a") as logFile:
+            logFile.write(msg)
 
     def logToJson(self):
         dateList = self.dateList
         filename = "{0}-{1}-{2}".format(dateList[1], dateList[2], dateList[4])
 
-        logFile = open("{0}.log".format(filename), "r")
-        ele = ['time', 'name', 'content']
-        line = logFile.readlines()[-1].split(" ", 2)
-        result = {ele[i]: line[i].strip() for i in range(3)}
-        logFile.close()
+        with open("{0}.log".format(filename), "r") as logFile:
+            ele = ['time', 'name', 'content']
+            line = logFile.readlines()[-1].split(" ", 2)
+            result = {ele[i]: line[i].strip() for i in range(3)}
 
         jsonFile = open("{0}.json".format(filename), "a")
         jsonData = json.dumps(result, ensure_ascii=False)
-        jsonFile.write("{0}, ".format(jsonData))
+        jsonFile.write("{0},".format(jsonData))
         jsonFile.close()
 
 
@@ -83,7 +81,6 @@ if __name__ == "__main__":
     # Login to the server
     bot = LogBot()
     connected = bot.connect(HOST, PORT, CHANNEL, NICKNAME, IDENTITY, REALNAME)
-    fwd = os.getcwd()
 
     # Read from the channel
     while connected:
@@ -91,6 +88,6 @@ if __name__ == "__main__":
             if msg != "":
                 bot.logDown(msg)
                 bot.logToJson()
-                print(msg, end='')
+                print(msg)
 
             time.sleep(0.01)
