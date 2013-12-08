@@ -23,9 +23,9 @@ function fetchJson(HOST, DIR) {
 
 
 function loadJson() {
+    var host = window.location.toString();
     var channel = "nchusg.it";
-
-    var data = fetchJson("http://localhost:8000", "/static/data/" + channel + "/");
+    var data = fetchJson(host, "/static/data/" + channel + "/");
     var dataLen = data.length;
 
     var dateList = Date().toString().split(" ");
